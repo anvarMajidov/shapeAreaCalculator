@@ -4,6 +4,7 @@
    Эта таблица содержит в себе product_id и category_id(ниже я прикрепил query для этой таблицы)
  */
 
+--основной query для получения продуктов
 select p.product_id, p.product_name, c.category_id, c.category_name
 from product as p
     left join product_category as pc on p.product_id = pc.product_id
