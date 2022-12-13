@@ -1,4 +1,6 @@
-﻿namespace ProjectLibrary.shapes;
+﻿using ProjectLibrary.exceptions;
+
+namespace ProjectLibrary.shapes;
 
 public class Triangle : IShape
 {
@@ -15,9 +17,24 @@ public class Triangle : IShape
 
     public double GetArea()
     {
-        if (IsTriangleRight()) return GetAreaOfRightTriangle();
+        if (IsAnySideNegative()) throw new NegativeLengthException("Side length cannot be negative");
+        if (!IsTriangleValid()) throw new InvalidTriangleException("Triangle cannot exist with such sides");
+        
+        if (IsTriangleRightAngled()) return GetAreaOfRightTriangle();
 
         return CalculateArea();
+    }
+
+    private bool IsAnySideNegative()
+    {
+        return S1 < 0 || S2 < 0 || S3 < 0;
+    }
+
+    //треугольник можно построить только при условии что 
+    //сумма любых двух сторон превышает третью
+    private bool IsTriangleValid()
+    {
+        return S1 + S2 > S3 && S1 + S3 > S2 && S2 + S3 > S1;
     }
     
     private double CalculateArea()
@@ -29,15 +46,15 @@ public class Triangle : IShape
 
     private double GetAreaOfRightTriangle()
     {
-        if (IsTriangleRight(S1, S2, S3)) return S2 * S3 / 2;
-        if (IsTriangleRight(S2, S1, S3)) return S1 * S3 / 2;
+        if (IsTriangleRightAngled(S1, S2, S3)) return S2 * S3 / 2;
+        if (IsTriangleRightAngled(S2, S1, S3)) return S1 * S3 / 2;
         return S1 * S2 / 2;
     }
 
-    private bool IsTriangleRight(double h, double l1, double l2) => h * h == l1 * l1 + l2 * l2;
+    private bool IsTriangleRightAngled(double h, double l1, double l2) => h * h == l1 * l1 + l2 * l2;
         
-    private bool IsTriangleRight()
+    private bool IsTriangleRightAngled()
     {
-        return IsTriangleRight(S1, S2, S3) || IsTriangleRight(S2, S1, S3) || IsTriangleRight(S3, S1, S2);
+        return IsTriangleRightAngled(S1, S2, S3) || IsTriangleRightAngled(S2, S1, S3) || IsTriangleRightAngled(S3, S1, S2);
     }
 }
